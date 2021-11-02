@@ -1,5 +1,5 @@
 {
-  "name": "Team 8 Server",
+  "name": "team8-tcss450-server",
   "version": "1.0.0",
   "description": "TCSS 450 project webservice",
   "main": "index.js",
@@ -27,8 +27,5 @@
     "npm": "^6.14.0",
     "pg": "^8.7.1",
     "pushy": "^2.0.8"
-  },
-  "engines": {
-    "node": "^14.18.1"
   }
 }
