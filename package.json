@@ -1,5 +1,5 @@
 {
-  "name": "Team 8 Server",
+  "name": "team8-tcss450-server",
   "version": "1.0.0",
   "description": "TCSS 450 project webservice",
   "main": "index.js",
