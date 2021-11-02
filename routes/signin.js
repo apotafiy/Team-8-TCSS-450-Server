@@ -92,6 +92,9 @@ router.get(
             message: 'User not found',
           });
           return;
+        } else if (false /* !result.rows[0].confirmed */) {
+          // TODO: check if user if verified
+          //
         }
 
         //Retrieve the salt used to create the salted-hash provided from the DB

@@ -83,11 +83,14 @@ router.post('/', (request, response) => {
           success: true,
           email: result.rows[0].email,
         });
+
+        // TODO: actually send the confirmation email to the user
+        // email and password and such will be stored as config variables
         sendEmail(
           'our.email@lab.com',
           email,
-          'Welcome to our App!',
-          'Please verify your Email account.'
+          'Please Verify Your Email',
+          'To verify your email account, click the link below.' // TODO: add link
         );
       })
       .catch((error) => {
@@ -115,6 +118,7 @@ router.post('/', (request, response) => {
   }
 });
 
+// TODO: remove
 router.get('/hash_demo', (request, response) => {
   let password = 'hello12345';
 
