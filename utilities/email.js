@@ -30,7 +30,7 @@ async function main() {
   // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
 }
 
-main().catch(console.error);
+//main().catch(console.error);
 //--------------------------------------------------------------
 
 let sendEmail = (sender, receiver, subject, message) => {
