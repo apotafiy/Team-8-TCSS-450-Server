@@ -32,12 +32,12 @@ CREATE TABLE ChatMembers (ChatID INT NOT NULL,
 
 DROP TABLE IF EXISTS Messages;
 CREATE TABLE Messages (PrimaryKey SERIAL PRIMARY KEY,
-                       ChatID INT,
-                       Message VARCHAR(255),
-                       MemberID INT,
-                       FOREIGN KEY(MemberID) REFERENCES Members(MemberID),
-                       FOREIGN KEY(ChatID) REFERENCES Chats(ChatID),
-                       TimeStamp TIMESTAMP WITH TIME ZONE DEFAULT current_timestamp
+                        ChatID INT,
+                        Message VARCHAR(255),
+                        MemberID INT,
+                        FOREIGN KEY(MemberID) REFERENCES Members(MemberID),
+                        FOREIGN KEY(ChatID) REFERENCES Chats(ChatID),
+                        TimeStamp TIMESTAMP WITH TIME ZONE DEFAULT current_timestamp
 );
 
 DROP TABLE IF EXISTS Locations;

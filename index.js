@@ -20,10 +20,6 @@ app.use('/auth', require('./routes/signin.js'));
 
 app.use('/auth', require('./routes/register.js'));
 
-app.use('/hello', require('./routes/hello.js'));
-
-app.use('/phish', middleware.checkToken, require('./routes/phish.js'));
-
 /*
  * Return HTML for the / end point.
  * This is a nice location to document your web service API
