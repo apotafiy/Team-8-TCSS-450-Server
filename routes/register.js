@@ -87,11 +87,10 @@ router.post('/', (request, response) => {
         // TODO: actually send the confirmation email to the user
         // email and password and such will be stored as config variables
         sendEmail(
-          'our.email@lab.com',
           email,
           'Please Verify Your Email',
           'To verify your email account, click the link below.' // TODO: add link
-        );
+        ).catch(); // TODO: deal with error
       })
       .catch((error) => {
         //log the error

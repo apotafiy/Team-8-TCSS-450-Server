@@ -93,8 +93,8 @@ router.get(
           });
           return;
         } else if (false /* !result.rows[0].confirmed */) {
-          // TODO: check if user if verified
-          //
+          // TODO: check if user if verified, if not then have error response
+          // TODO: api documentation
         }
 
         //Retrieve the salt used to create the salted-hash provided from the DB
@@ -108,6 +108,7 @@ router.get(
 
         //Did our salted hash match their salted hash?
         if (storedSaltedHash === providedSaltedHash) {
+          // TODO: update Pushy token?
           //credentials match. get a new JWT
           let token = jwt.sign(
             {
@@ -126,7 +127,7 @@ router.get(
             token: token,
           });
         } else {
-          //credentials dod not match
+          //credentials did not match
           response.status(400).send({
             message: 'Credentials did not match',
           });
