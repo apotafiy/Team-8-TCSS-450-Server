@@ -9,6 +9,7 @@ async function sendEmail(
   receiver,
   subject,
   message,
+  html,
   callback /** Maybe maybe not. For dealing with error or success */
 ) {
   // create reusable transporter object using the default SMTP transport
@@ -25,9 +26,10 @@ async function sendEmail(
   transporter.sendMail(
     {
       from: `"Team 8 👻" <${process.env.GMAIL_USER}>`, // sender address
-      to: receiver, //,'sdodvntlzeuifyiuki@mrvpt.com', // 10minuteemail when testing
+      to: receiver, //,'sdodvntlzeuifyiuki@mrvpt.com' // 10minuteemail when testing
       subject: subject, // Subject line
       text: message, // plain text body
+      html: html,
     },
     (err, data) => {
       // 'data' arg has a lot of same attributes as 'info' variable
@@ -37,8 +39,7 @@ async function sendEmail(
         console.error(err);
       } else {
         // TODO: let client know 'Confirmation email sent to fake@email.com'
-        console.log('Message sent: %s', data.messageId);
-        //console.log('Message sent: %s', info.messageId);
+        //console.log('Message sent: %s', data.messageId);
       }
     }
   );
