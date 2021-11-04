@@ -6,6 +6,32 @@ const config = {
   secret: process.env.JSON_WEB_TOKEN,
 };
 
+/**
+ * @api {get} /confirmation Request to confirm a user email in the system
+ * @apiName GetConfirm
+ * @apiGroup confirmation
+ *
+ * @apiSuccess {boolean} success true when the name is found and password matches
+ * @apiSuccess {String} email user email
+ * @apiSuccess {String} message "You may log in now"
+ *
+ *  * @apiSuccessExample {json} Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "success": true,
+ *       "email": "fake@email.com",
+ *       "message": "You may log in now"
+ *     }
+ *
+ * @apiError (400: Missing Parameters) {String} message "Missing required information"
+ *
+ * @apiError (400: Malformed Authorization Header) {String} message "Malformed Authorization Header"
+ *
+ * @apiError (404: User Not Found) {String} message "User not found"
+ *
+ * @apiError (400: Invalid Credentials) {String} message "Credentials did not match"
+ *
+ */
 router.get('/', (request, response) => {
   const token = request.query.token;
   // error if it does not have a token arg
@@ -18,7 +44,7 @@ router.get('/', (request, response) => {
   jwt.verify(token, config.secret, (err, decoded) => {
     // error if token is invalid
     if (err) {
-      return res.status(403).json({
+      return response.status(403).json({
         // TODO: documentation
         success: false,
         message: 'Token is not valid',
