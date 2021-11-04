@@ -104,16 +104,11 @@ router.post('/', (request, response) => {
         );
         let baseUrl = 'https://team8-tcss450-server.herokuapp.com/';
         //baseUrl = process.env.LOCAL_URL;
-        // if (process.env.LOCAL_URL) {
-        //   // process.env.LOCAL_URL must exist only the local .env file, not in the heroku config
-        //   baseUrl = process.env.LOCAL_URL;
-        // }
         const confirmURL = `${baseUrl}confirmation?token=${token}`;
         sendEmail(
           email,
           'Please Verify Your Email',
-          'To verify your email account, click the link below.\n',
-          `<a href="${confirmURL}">${confirmURL}</a>`
+          `<p>To verify your email account, click the link below.</p><p><a href="${confirmURL}">${confirmURL}</a></p>`
         )
           .then(() => {
             //We successfully added the user and sent the email!
@@ -124,11 +119,9 @@ router.post('/', (request, response) => {
           })
           .catch((err) => {
             response.status(500).send({ message: 'Server error' });
-          }); // TODO: deal with error. maybe make this synchronous so dont have to deal with this here?
+          });
       })
       .catch((error) => {
-        //log the error
-        // console.log(error)
         if (error.constraint == 'members_username_key') {
           response.status(400).send({
             message: 'Username exists',
@@ -150,21 +143,6 @@ router.post('/', (request, response) => {
       message: 'Missing required information',
     });
   }
-});
-
-// TODO: remove
-router.get('/hash_demo', (request, response) => {
-  let password = 'hello12345';
-
-  let salt = generateSalt(32);
-  let salted_hash = generateHash(password, salt);
-  let unsalted_hash = generateHash(password);
-
-  response.status(200).send({
-    salt: salt,
-    salted_hash: salted_hash,
-    unsalted_hash: unsalted_hash,
-  });
 });
 
 module.exports = router;
