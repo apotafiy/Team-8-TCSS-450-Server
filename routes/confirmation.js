@@ -7,9 +7,9 @@ const config = {
 };
 
 /**
- * @api {get} /confirmation Request to confirm a user email in the system
+ * @api {get} /Confirmation Request to confirm a user email in the system
  * @apiName GetConfirm
- * @apiGroup confirmation
+ * @apiGroup Confirmation
  *
  * @apiSuccess {boolean} success true when the name is found and password matches
  * @apiSuccess {String} email user email
@@ -25,11 +25,9 @@ const config = {
  *
  * @apiError (400: Missing Parameters) {String} message "Missing required information"
  *
- * @apiError (400: Malformed Authorization Header) {String} message "Malformed Authorization Header"
+ * @apiError (403: Invalid Token) {String} message "Token is not valid"
  *
- * @apiError (404: User Not Found) {String} message "User not found"
- *
- * @apiError (400: Invalid Credentials) {String} message "Credentials did not match"
+ * @apiError (500: Server Error) {String} message "Server error"
  *
  */
 router.get('/', (request, response) => {
@@ -37,7 +35,6 @@ router.get('/', (request, response) => {
   // error if it does not have a token arg
   if (token == undefined || token == null) {
     return response.status(400).send({
-      // TODO: documentation
       message: 'Missing required information',
     });
   }
@@ -45,12 +42,10 @@ router.get('/', (request, response) => {
     // error if token is invalid
     if (err) {
       return response.status(403).json({
-        // TODO: documentation
         success: false,
         message: 'Token is not valid',
       });
     } else {
-      // change DB
       const theQuery = 'UPDATE Members SET Confirmed=$1 WHERE Email=$2';
       const args = [true, decoded.email];
       pool
@@ -69,9 +64,6 @@ router.get('/', (request, response) => {
             message: 'Server error',
           });
         });
-
-      // decoded is the payload of the JWT
-      // i think  you only get the email here
     }
   });
 });

@@ -103,17 +103,12 @@ router.post('/', (request, response) => {
           }
         );
         let baseUrl = 'https://team8-tcss450-server.herokuapp.com/';
-        baseUrl = process.env.LOCAL_URL;
-        // if (process.env.LOCAL_URL) {
-        //   // process.env.LOCAL_URL must exist only the local .env file, not in the heroku config
-        //   baseUrl = process.env.LOCAL_URL;
-        // }
+        //baseUrl = process.env.LOCAL_URL;
         const confirmURL = `${baseUrl}confirmation?token=${token}`;
         sendEmail(
           email,
           'Please Verify Your Email',
-          'To verify your email account, click the link below.\n', // TODO: why doesnt this text show up in email
-          `<a href="${confirmURL}">${confirmURL}</a>`
+          `<p>To verify your email account, click the link below.</p><p><a href="${confirmURL}">${confirmURL}</a></p>`
         )
           .then(() => {
             //We successfully added the user and sent the email!

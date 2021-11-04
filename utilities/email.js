@@ -2,7 +2,7 @@
 require('dotenv').config();
 const nodemailer = require('nodemailer');
 
-async function sendEmail(receiver, subject, message, html) {
+async function sendEmail(receiver, subject, html) {
   // create reusable transporter object using the default SMTP transport
   let transporter = nodemailer.createTransport({
     service: 'Gmail',
@@ -18,7 +18,7 @@ async function sendEmail(receiver, subject, message, html) {
       from: `"Team 8 👻" <${process.env.GMAIL_USER}>`, // sender address
       to: receiver, //,'sdodvntlzeuifyiuki@mrvpt.com' // 10minuteemail when testing
       subject: subject, // Subject line
-      text: message, // plain text body
+      //text: message, // plain text body
       html: html,
     },
     (err, data) => {
