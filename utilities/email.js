@@ -1,22 +1,38 @@
-let sendEmail = (sender, receiver, subject, message) => {
-    //research nodemailer for sending email from node.
-    // https://nodemailer.com/about/
-    // https://www.w3schools.com/nodejs/nodejs_email.asp
-    //create a burner gmail account 
-    //make sure you add the password to the environmental variables
-    //similar to the DATABASE_URL and PHISH_DOT_NET_KEY (later section of the lab)
+('use strict');
+require('dotenv').config();
+const nodemailer = require('nodemailer');
 
-    //fake sending an email for now. Post a message to logs. 
-    console.log("*********************************************************")
-    console.log('To: ' + receiver)
-    console.log('From: ' + sender)
-    console.log('Subject: ' + subject)
-    console.log("_________________________________________________________")
-    console.log(message)
-    console.log("*********************************************************")
+async function sendEmail(receiver, subject, html) {
+  // create reusable transporter object using the default SMTP transport
+  let transporter = nodemailer.createTransport({
+    service: 'Gmail',
+    auth: {
+      user: process.env.GMAIL_USER,
+      pass: process.env.GMAIL_PASS,
+    },
+  });
 
+  // send mail with defined transport object
+  transporter.sendMail(
+    {
+      from: `"Team 8 👻" <${process.env.GMAIL_USER}>`, // sender address
+      to: receiver, //,'sdodvntlzeuifyiuki@mrvpt.com' // 10minuteemail when testing
+      subject: subject, // Subject line
+      //text: message, // plain text body
+      html: html,
+    },
+    (err, data) => {
+      if (err) {
+        // TODO: somehow let client know that error occurred
+        // maybe throw this error and have it caught elsewhere?
+        console.error(err);
+      } else {
+        // TODO: let client know 'Confirmation email sent to fake@email.com'
+      }
+    }
+  );
 }
 
-module.exports = { 
-    sendEmail
-}
+module.exports = {
+  sendEmail,
+};

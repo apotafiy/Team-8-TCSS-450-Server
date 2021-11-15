@@ -1,6 +1,10 @@
 //express is the framework we're going to use to handle requests
 const express = require('express');
 
+require('dotenv').config();
+
+const jwt = require('jsonwebtoken');
+
 //Access the connection to Heroku Database
 const pool = require('../utilities').pool;
 
@@ -13,6 +17,10 @@ const generateSalt = require('../utilities').generateSalt;
 const sendEmail = require('../utilities').sendEmail;
 
 const router = express.Router();
+
+const config = {
+  secret: process.env.JSON_WEB_TOKEN,
+};
 
 /**
  * @api {post} /auth Request to register a user
@@ -78,21 +86,42 @@ router.post('/', (request, response) => {
     pool
       .query(theQuery, values)
       .then((result) => {
-        //We successfully added the user!
-        response.status(201).send({
-          success: true,
-          email: result.rows[0].email,
-        });
-        sendEmail(
-          'our.email@lab.com',
-          email,
-          'Welcome to our App!',
-          'Please verify your Email account.'
+        // //We successfully added the user!
+        // response.status(201).send({
+        //   success: true,
+        //   email: result.rows[0].email,
+        // });
+
+        // create new JWT just for this
+        let token = jwt.sign(
+          {
+            email: result.rows[0].email,
+          },
+          config.secret,
+          {
+            expiresIn: '7 days',
+          }
         );
+        let baseUrl = 'https://team8-tcss450-server.herokuapp.com/';
+        //baseUrl = process.env.LOCAL_URL;
+        const confirmURL = `${baseUrl}confirmation?token=${token}`;
+        sendEmail(
+          email,
+          'Please Verify Your Email',
+          `<p>To verify your email account, click the link below.</p><p><a href="${confirmURL}">${confirmURL}</a></p>`
+        )
+          .then(() => {
+            //We successfully added the user and sent the email!
+            response.status(201).send({
+              success: true,
+              email: result.rows[0].email,
+            });
+          })
+          .catch((err) => {
+            response.status(500).send({ message: 'Server error' });
+          });
       })
       .catch((error) => {
-        //log the error
-        // console.log(error)
         if (error.constraint == 'members_username_key') {
           response.status(400).send({
             message: 'Username exists',
@@ -102,6 +131,7 @@ router.post('/', (request, response) => {
             message: 'Email exists',
           });
         } else {
+          console.error(error);
           response.status(400).send({
             message: 'other error, see detail',
             detail: error.detail,
@@ -113,20 +143,6 @@ router.post('/', (request, response) => {
       message: 'Missing required information',
     });
   }
-});
-
-router.get('/hash_demo', (request, response) => {
-  let password = 'hello12345';
-
-  let salt = generateSalt(32);
-  let salted_hash = generateHash(password, salt);
-  let unsalted_hash = generateHash(password);
-
-  response.status(200).send({
-    salt: salt,
-    salted_hash: salted_hash,
-    unsalted_hash: unsalted_hash,
-  });
 });
 
 module.exports = router;

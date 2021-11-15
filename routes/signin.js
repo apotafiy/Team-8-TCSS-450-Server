@@ -82,7 +82,7 @@ router.get(
   },
   (request, response) => {
     const theQuery =
-      'SELECT Password, Salt, MemberId FROM Members WHERE Email=$1';
+      'SELECT Password, Salt, MemberId, Confirmed FROM Members WHERE Email=$1';
     const values = [request.auth.email];
     pool
       .query(theQuery, values)
@@ -92,6 +92,11 @@ router.get(
             message: 'User not found',
           });
           return;
+        } else if (!result.rows[0].confirmed) {
+          return response.status(401).send({
+            // TODO: documentation
+            message: 'Please confirm your email before you log in',
+          });
         }
 
         //Retrieve the salt used to create the salted-hash provided from the DB
@@ -105,6 +110,7 @@ router.get(
 
         //Did our salted hash match their salted hash?
         if (storedSaltedHash === providedSaltedHash) {
+          // TODO: update Pushy token?
           //credentials match. get a new JWT
           let token = jwt.sign(
             {
@@ -123,7 +129,7 @@ router.get(
             token: token,
           });
         } else {
-          //credentials dod not match
+          //credentials did not match
           response.status(400).send({
             message: 'Credentials did not match',
           });
