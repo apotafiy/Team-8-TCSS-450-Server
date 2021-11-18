@@ -7,7 +7,7 @@ const config = {
 };
 
 /**
- * @api {get} /Confirmation Request to confirm a user email in the system
+ * @api {get} confirmation Request to confirm a user email in the system
  * @apiName GetConfirm
  * @apiGroup Confirmation
  *
@@ -52,7 +52,6 @@ router.get('/', (request, response) => {
         .query(theQuery, args)
         .then(() => {
           response.status(200).send({
-            // TODO: documentation
             success: true,
             email: decoded.email,
             message: 'You may log in now',
@@ -60,7 +59,6 @@ router.get('/', (request, response) => {
         })
         .catch((err) => {
           response.status(500).send({
-            // TODO: documentation
             message: 'Server error',
           });
         });

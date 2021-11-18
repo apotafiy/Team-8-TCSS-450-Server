@@ -23,7 +23,7 @@ const config = {
 };
 
 /**
- * @api {post} /auth Request to register a user
+ * @api {post} auth Request to register a user
  * @apiName PostAuth
  * @apiGroup Auth
  *
