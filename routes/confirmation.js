@@ -7,7 +7,7 @@ const config = {
 };
 
 /**
- * @api {get} /Confirmation Request to confirm a user email in the system
+ * @api {get} confirmation Request to confirm a user email in the system
  * @apiName GetConfirm
  * @apiGroup Confirmation
  *

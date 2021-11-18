@@ -7,7 +7,7 @@ const isStringProvided = validation.isStringProvided;
 const convert = require('../utilities/weatherUtils');
 
 /**
- * @api {get} /weather Request weather data
+ * @api {get} weather Request weather data
  * @apiName GetWeather
  * @apiGroup Weather
  *
