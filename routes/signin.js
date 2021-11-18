@@ -42,6 +42,8 @@ const config = {
  *
  * @apiError (404: User Not Found) {String} message "User not found"
  *
+ * @apiError (401: Unverified) {String} message "Please confirm your email before you log in"
+ *
  * @apiError (400: Invalid Credentials) {String} message "Credentials did not match"
  *
  */
@@ -94,7 +96,6 @@ router.get(
           return;
         } else if (!result.rows[0].confirmed) {
           return response.status(401).send({
-            // TODO: documentation
             message: 'Please confirm your email before you log in',
           });
         }

@@ -52,7 +52,6 @@ router.get('/', (request, response) => {
         .query(theQuery, args)
         .then(() => {
           response.status(200).send({
-            // TODO: documentation
             success: true,
             email: decoded.email,
             message: 'You may log in now',
@@ -60,7 +59,6 @@ router.get('/', (request, response) => {
         })
         .catch((err) => {
           response.status(500).send({
-            // TODO: documentation
             message: 'Server error',
           });
         });
