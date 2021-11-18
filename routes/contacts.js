@@ -1,16 +1,15 @@
 //express is the framework we're going to use to handle requests
-const express = require('express')
+const express = require('express');
 
 //Access the connection to Heroku Database
-const pool = require('../utilities/exports').pool
+const pool = require('../utilities/exports').pool;
 
-const router = express.Router()
+const router = express.Router();
 
-const msg_functions = require('../utilities/exports').messaging
+const msg_functions = require('../utilities/exports').messaging;
 
-const validation = require('../utilities').validation
-let isStringProvided = validation.isStringProvided
-let isValidEmail = validation.isValidEmail
+const validation = require('../utilities').validation;
+let isStringProvided = validation.isStringProvided;
 
 /**
  * @api {get} /contacts/:memberId Get contacts for a given memberid
@@ -88,7 +87,7 @@ router.post("/", (request, response, next) => {
     pool.query(query, values)
     .then(result => {
         result.rows.forEach(entry =>
-            msg_functions.sendContactRequestToIndividual(
+            msg_functions.sendContactReqToIndividual(
                 entry.token, request.headers.memberid))
         response.status(200).send({
             message:"Contact request sent."
