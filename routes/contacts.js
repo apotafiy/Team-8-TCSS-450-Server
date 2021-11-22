@@ -99,4 +99,6 @@ router.post("/", (request, response, next) => {
     })
 });
 
+//TODO add something for searching contacts and deleting contacts
+
 module.exports = router
