@@ -20,7 +20,7 @@ let isStringProvided = validation.isStringProvided;
  * 
  * @apiError (400: SQL error when searching for contacts) issue searching for contact.
  */
-router.get("/", (request,response) => {
+router.get("/:memberId", (request,response) => {
     let query = "SELECT MemberID, FirstName, LastName, Username FROM Members WHERE MemberID IN (SELECT MemberID_A FROM Contacts WHERE MemberID_B = $1 AND Verified = 1) OR MemberID IN (SELECT MemberID_B FROM Contacts WHERE MemberID_A = $1 AND Verified = 1)"
     let values = [request.decoded.memberid]
     console.log(request.decoded.memberid)
