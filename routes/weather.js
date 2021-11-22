@@ -34,13 +34,13 @@ router.get(
   (request, response, next) => {
     // parameters/arguments not provided
     if (
-      !isStringProvided(request.body.lat) ||
-      !isStringProvided(request.body.lon)
+      !isStringProvided(request.query.lat) ||
+      !isStringProvided(request.query.lon)
     ) {
       response.status(400).send({
         message: 'Missing required information',
       });
-    } else if (isNaN(request.body.lat) || isNaN(request.body.lon)) {
+    } else if (isNaN(request.query.lat) || isNaN(request.query.lon)) {
       // invalid lat and lon
       response.status(400).send({
         message: 'Malformed parameter. Latitude and longitude must be numbers.',
@@ -50,7 +50,7 @@ router.get(
     }
   },
   (request, response, next) => {
-    const URL = `https://api.openweathermap.org/data/2.5/onecall?lat=${request.body.lat}&lon=${request.body.lon}&exclude=minutely&units=imperial&appid=${process.env.WEATHER_API_KEY}`;
+    const URL = `https://api.openweathermap.org/data/2.5/onecall?lat=${request.query.lat}&lon=${request.query.lon}&exclude=minutely&units=imperial&appid=${process.env.WEATHER_API_KEY}`;
 
     fetch(URL)
       .then((result) => result.json())
