@@ -40,7 +40,7 @@ router.get("/:memberId", (request,response) => {
 
 
 /**
- * @api {post} /contacts/create Add a contact to the current member
+ * @api {post} /contacts Add a contact to the current member
  * @apiName CreateContact
  * @apiGroup Contacts
  * 
@@ -55,12 +55,12 @@ router.get("/:memberId", (request,response) => {
  * @apiError (403: SQL Error on insert) {String} There's been some issue on the SQL server.
  */
 router.post("/", (request, response, next) => {
-    if(request.headers.memberid === undefined){
+    if(request.body.memberid === undefined){
         response.status(401).send({
             message: "Missing target memberid."
         })
     }
-    else if(isNaN(request.headers.memberid)){
+    else if(isNaN(request.body.memberid)){
         response.status(402).send({
             message: "MemberIDs must be a number."
         })
@@ -70,7 +70,7 @@ router.post("/", (request, response, next) => {
     }
 }, (request, response, next) => {
     let query = "INSERT INTO Contacts(MemberID_A, MemberID_B) VALUES ($1, $2)"
-    let values = [request.decoded.memberid, request.headers.memberid]
+    let values = [request.decoded.memberid, request.body.memberid]
 
     pool.query(query, values)
     .then( result =>
@@ -83,12 +83,12 @@ router.post("/", (request, response, next) => {
     })
 }, (request, response) => {
     let query = "SELECT token FROM Push_Token WHERE memberid = $1"
-    let values = [request.headers.memberid]
+    let values = [request.body.memberid]
     pool.query(query, values)
     .then(result => {
         result.rows.forEach(entry =>
             msg_functions.sendContactReqToIndividual(
-                entry.token, request.headers.memberid))
+                entry.token, request.body.memberid))
         response.status(200).send({
             message:"Contact request sent."
         })
@@ -98,5 +98,7 @@ router.post("/", (request, response, next) => {
         })
     })
 });
+
+//TODO add something for searching contacts and deleting contacts
 
 module.exports = router
