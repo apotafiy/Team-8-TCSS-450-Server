@@ -25,8 +25,23 @@ function sendMessageToIndividual(token, message) {
   });
 }
 
+function sendContactReqToIndividual(token, message) {
+  var data = {
+    type: 'contactReq',
+    contactid: message,
+  };
+
+  pushyAPI.sendPushNotification(data, token, {}, function (err, id) {
+    if (err) {
+      return console.log('Fatal Error', err);
+    }
+
+    console.log('Push sent successfully! (ID: ' + id + ')');
+  });
+}
 //add other "sendTypeToIndividual" functions here. Don't forget to export them
 
 module.exports = {
   sendMessageToIndividual,
+  sendContactReqToIndividual,
 };
