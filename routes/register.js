@@ -105,11 +105,36 @@ router.post('/', (request, response) => {
         let baseUrl = 'https://team8-tcss450-server.herokuapp.com/';
         //baseUrl = process.env.LOCAL_URL;
         const confirmURL = `${baseUrl}confirmation?token=${token}`;
-        sendEmail(
-          email,
-          'Please Verify Your Email',
-          `<p>To verify your email account, click the link below.</p><p><a href="${confirmURL}">${confirmURL}</a></p>`
-        )
+
+        const HTML_EMAIL_TEMPLATE =
+          '<style>' +
+          '.button {' +
+          '  border: none;' +
+          '  color: white;' +
+          '  padding: 15px 32px;' +
+          '  text-align: center;' +
+          '  text-decoration: none;' +
+          '  display: inline-block;' +
+          '  font-size: 16px;' +
+          '  margin: 4px 2px;' +
+          '  cursor: pointer;' +
+          '}' +
+          '.button1 {background-color: #3d9fd4;}' +
+          '</style>' +
+          '</head>' +
+          '<body>' +
+          "<p style='font-family: Arial'>Hey " +
+          first +
+          ', </p>' +
+          "<p style='font-family: Arial'>Thanks for signing up. We just need you to verify your email address in order to complete setting up your account.<p>" +
+          "<p style='font-family: Arial'>To verify your email account, click the button below.</p>" +
+          "<p><a href='" +
+          confirmURL +
+          "'><button class='button button1'>Verify Now</button></a></p>" +
+          "<p style='font-family: Arial'>Welcome to SpookChat!</p>" +
+          "<p style='font-family: Arial'>From Team 8 &#128123;</p>";
+
+        sendEmail(email, 'Please Verify Your Email', HTML_EMAIL_TEMPLATE)
           .then(() => {
             //We successfully added the user and sent the email!
             response.status(201).send({
