@@ -1,13 +1,26 @@
 //express is the framework we're going to use to handle requests
-const express = require('express')
+const express = require('express');
 
 //Access the connection to Heroku Database
-let pool = require('../utilities/utils').pool
+const pool = require('../utilities/exports').pool;
 
-var router = express.Router()
+const router = express.Router();
 
-router.use(require("body-parser").json())
+const msg_functions = require('../utilities/exports').messaging;
 
+const validation = require('../utilities').validation;
+let isStringProvided = validation.isStringProvided;
+
+
+/**
+ * @api {get} /chatinfo
+ * @apiName GetChats
+ * @apiGroup chatinfo
+ *
+ * @apiDescription gets a users chats
+ *
+ * @apiError (400: SQL error when searching for contacts) issue searching for contact.
+ */
 router.get("/", (request, response) => {
     let query = 'SELECT ChatID, Name FROM Chats where ChatID in (SELECT ChatID FROM ChatMembers where MemberID=$1)'
     let values = [request.decoded.memberid];
