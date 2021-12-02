@@ -48,7 +48,7 @@ router.get(
     //get users that invited
     // SELECT MemberID_A FROM Contacts WHERE MemberID_B=$1
     const query =
-      'SELECT MemberID, FirstName, LastName, Username FROM Members WHERE MemberID IN (SELECT MemberID_A FROM Contacts WHERE MemberID_B=$1)';
+      'SELECT MemberID, FirstName, LastName, Username FROM Members WHERE MemberID IN (SELECT MemberID_A FROM Contacts WHERE MemberID_B=$1 AND Verified = 0)';
     const values = [request.decoded.memberid];
     pool
       .query(query, values)
