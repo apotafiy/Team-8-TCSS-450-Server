@@ -25,10 +25,11 @@ function sendMessageToIndividual(token, message) {
   });
 }
 
-function sendContactReqToIndividual(token, message) {
+function sendContactReqToIndividual(token, memberid) {
   var data = {
-    type: 'contactReq',
-    contactid: message,
+    type: 'contact_req',
+    message: 'You have a new contact invite!',
+    memberid: memberid,
   };
 
   pushyAPI.sendPushNotification(data, token, {}, function (err, id) {
