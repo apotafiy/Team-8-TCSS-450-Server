@@ -34,13 +34,13 @@ router.get(
     pool
       .query(query, values)
       .then((result) => {
-        body.rows = result.rows;
+        request.body.rows = result.rows;
         next();
       })
       .catch((error) => {
+        console.error(error);
         response.status(500).send({
           message: 'SQL Error when searching for contacts',
-          error: error,
         });
       });
   },
@@ -54,14 +54,13 @@ router.get(
       .query(query, values)
       .then((result) => {
         response.status(200).send({
-          rows: body.rows,
+          rows: request.body.rows,
           invites: result.rows,
         });
       })
       .catch((error) => {
         response.status(500).send({
           message: 'SQL Error when searching for invites',
-          error: error,
         });
       });
   }
@@ -183,7 +182,7 @@ router.post(
 );
 
 /**
- * @api {put} /contacts Accept a contact invite
+ * @api {put} contacts Accept a contact invite
  * @apiName AcceptContact
  * @apiGroup Contacts
  *
@@ -284,6 +283,78 @@ router.put(
   }
 );
 
-//TODO: add something for deleting contacts
+/**
+ * @api {delete} contacts Accept a contact invite
+ * @apiName DeleteContact
+ * @apiGroup Contacts
+ *
+ * @apiDescription delete contact
+ *
+ * @apiHeader {String} authorization Valid JSON Web Token JWT
+ *
+ * @apiParam {Integer} memberid memberid of user to that will be deleted in contacts
+ *
+ * @apiSuccess (Success 200) {String} Success when the contact has been successfully deleted.
+ *
+ * @apiError (400: Invalid parameter) {Integer} Parameter should be an integer
+ * @apiError (404: Not found) {String} User does not exist
+ * @apiError (401: Missing target memberid) {String} Request is missing parameters
+ * @apiError (500: SQL Error on insert) {String} There's been some issue on the SQL server.
+ */
+router.delete(
+  '/',
+  (request, response, next) => {
+    // check params
+    if (request.body.memberid === undefined) {
+      response.status(401).send({
+        message: 'Missing target memberid',
+      });
+    } else if (isNaN(request.body.memberid)) {
+      response.status(400).send({
+        message: 'Parameter should be a number',
+      });
+    } else {
+      next();
+    }
+  },
+  (request, response, next) => {
+    // check that user exists
+    let query = 'SELECT memberid FROM members WHERE memberid = $1';
+    let values = [request.body.memberid];
+    pool
+      .query(query, values)
+      .then((result) => {
+        if (result.rows.length === 0) {
+          response.status(404).send({
+            message: 'User does not exist',
+          });
+        } else {
+          next();
+        }
+      })
+      .catch((err) => {
+        response.status(500).send({
+          message: 'SQL Error',
+        });
+      });
+  },
+  (request, response) => {
+    const query =
+      'DELETE FROM Contacts WHERE (MemberID_A=$1 AND MemberID_B=$2) OR (MemberID_B=$1 AND MemberID_A=$2)';
+    const values = [request.body.memberid, request.decoded.memberid];
+    pool
+      .query(query, values)
+      .then((result) => {
+        response.status(200).send({
+          message: 'Contact successfully deleted',
+        });
+      })
+      .catch((err) => {
+        response.status(500).send({
+          message: 'SQL Error',
+        });
+      });
+  }
+);
 
 module.exports = router;
