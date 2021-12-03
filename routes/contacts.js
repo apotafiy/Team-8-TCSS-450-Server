@@ -284,7 +284,7 @@ router.put(
 );
 
 /**
- * @api {delete} contacts Accept a contact invite
+ * @api {delete} contacts Delete a contact
  * @apiName DeleteContact
  * @apiGroup Contacts
  *
@@ -305,11 +305,11 @@ router.delete(
   '/',
   (request, response, next) => {
     // check params
-    if (request.body.memberid === undefined) {
+    if (request.query.memberid === undefined) {
       response.status(401).send({
         message: 'Missing target memberid',
       });
-    } else if (isNaN(request.body.memberid)) {
+    } else if (isNaN(request.query.memberid)) {
       response.status(400).send({
         message: 'Parameter should be a number',
       });
@@ -320,7 +320,7 @@ router.delete(
   (request, response, next) => {
     // check that user exists
     let query = 'SELECT memberid FROM members WHERE memberid = $1';
-    let values = [request.body.memberid];
+    let values = [request.query.memberid];
     pool
       .query(query, values)
       .then((result) => {
@@ -341,7 +341,7 @@ router.delete(
   (request, response) => {
     const query =
       'DELETE FROM Contacts WHERE (MemberID_A=$1 AND MemberID_B=$2) OR (MemberID_B=$1 AND MemberID_A=$2)';
-    const values = [request.body.memberid, request.decoded.memberid];
+    const values = [request.query.memberid, request.decoded.memberid];
     pool
       .query(query, values)
       .then((result) => {
@@ -355,6 +355,7 @@ router.delete(
         });
       });
   }
+  // TODO: send pushy
 );
 
 module.exports = router;
