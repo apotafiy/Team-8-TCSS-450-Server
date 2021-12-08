@@ -78,6 +78,7 @@ router.post(
  * @apiHeader {String} authorization Valid JSON Web Token JWT
  *
  * @apiParam {Number} chatId the chat to add the user to
+ * @apiParam {String} email of the user to be added
  *
  * @apiSuccess {boolean} success true when the name is inserted
  *
@@ -92,10 +93,10 @@ router.post(
  * @apiUse JSONError
  */
 router.put(
-  '/:chatId/',
+  '/:chatId/:email',
   (request, response, next) => {
     //validate on empty parameters
-    if (!request.params.chatId) {
+    if (!request.params.chatId || !request.params.email) {
       response.status(400).send({
         message: 'Missing required information',
       });
@@ -129,14 +130,11 @@ router.put(
           error: error,
         });
       });
-    //code here based on the results of the query
   },
   (request, response, next) => {
-    //validate email exists
-    let query = 'SELECT * FROM Members WHERE MemberId=$1';
-    let values = [request.decoded.memberid];
-
-    console.log(request.decoded);
+    //validate email exists AND convert it to the associated memberId
+    let query = 'SELECT MemberID FROM Members WHERE Email=$1';
+    let values = [request.params.email];
 
     pool
       .query(query, values)
@@ -146,7 +144,7 @@ router.put(
             message: 'email not found',
           });
         } else {
-          //user found
+          request.params.email = result.rows[0].memberid;
           next();
         }
       })
@@ -157,10 +155,33 @@ router.put(
         });
       });
   },
+  // (request, response, next) => {
+  //   //validate email exists in the chat
+  //   let query = 'SELECT * FROM ChatMembers WHERE ChatId=$1 AND MemberId=$2';
+  //   let values = [request.params.chatId, request.params.email];
+
+  //   pool
+  //     .query(query, values)
+  //     .then((result) => {
+  //       if (result.rowCount > 0) {
+  //         next();
+  //       } else {
+  //         response.status(400).send({
+  //           message: 'user not in chat',
+  //         });
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       response.status(400).send({
+  //         message: 'SQL Error',
+  //         error: error,
+  //       });
+  //     });
+  // },
   (request, response, next) => {
     //validate email does not already exist in the chat
     let query = 'SELECT * FROM ChatMembers WHERE ChatId=$1 AND MemberId=$2';
-    let values = [request.params.chatId, request.decoded.memberid];
+    let values = [request.params.chatId, request.params.email];
 
     pool
       .query(query, values)
@@ -181,11 +202,11 @@ router.put(
       });
   },
   (request, response) => {
-    //Insert the memberId into the chat
+    //Delete the memberId from the chat
     let insert = `INSERT INTO ChatMembers(ChatId, MemberId)
                   VALUES ($1, $2)
                   RETURNING *`;
-    let values = [request.params.chatId, request.decoded.memberid];
+    let values = [request.params.chatId, request.params.email];
     pool
       .query(insert, values)
       .then((result) => {
