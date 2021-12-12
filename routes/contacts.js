@@ -319,6 +319,7 @@ router.put(
  * @apiParam {Integer} memberid memberid of user to that will be deleted in contacts
  *
  * @apiSuccess (Success 200) {String} Success when the contact has been successfully deleted.
+ * @apiSucces {Integer} memberid memberid of user deleted
  *
  * @apiError (400: Invalid parameter) {Integer} Parameter should be an integer
  * @apiError (404: Not found) {String} User does not exist
@@ -371,6 +372,7 @@ router.delete(
       .then((result) => {
         response.status(200).send({
           message: 'Contact successfully deleted',
+          memberid: request.query.memberid,
         });
       })
       .catch((err) => {
