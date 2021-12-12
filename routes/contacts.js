@@ -139,6 +139,29 @@ router.post(
       });
   },
   (request, response, next) => {
+    // build current user contact info
+    const query =
+      'SELECT memberid, email, firstname, lastname FROM Members WHERE memberid = $1';
+    const values = [request.decoded.memberid];
+    pool
+      .query(query, values)
+      .then((result) => {
+        if (result.rows.length === 0) {
+          response.status(404).send({
+            message: 'User not found',
+          });
+        } else {
+          request.body.contact = result.rows[0];
+          next();
+        }
+      })
+      .catch((error) => {
+        response.status(500).send({
+          message: 'SQL Error.',
+        });
+      });
+  },
+  (request, response, next) => {
     let query = 'INSERT INTO Contacts(MemberID_A, MemberID_B) VALUES ($1, $2)';
     let values = [request.decoded.memberid, request.body.memberid];
     pool
@@ -162,14 +185,15 @@ router.post(
             message: 'User not registered for pushy notifications',
           });
         } else {
-          result.rows.forEach((entry) =>
+          result.rows.forEach((entry) => {
             msg_functions.sendContactReqToIndividual(
               entry.token,
-              request.body.memberid
-            )
-          );
+              request.body.contact
+            );
+          });
           response.status(200).send({
             message: 'Contact invite sent',
+            contact: request.body.contact,
           });
         }
       })
