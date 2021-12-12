@@ -193,7 +193,7 @@ router.post(
           });
           response.status(200).send({
             message: 'Contact invite sent',
-            contact: request.body.contact,
+            user: request.body.contact,
           });
         }
       })
